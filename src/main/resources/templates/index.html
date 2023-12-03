@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="ISO-8859-1">
+<title>Registration and Login App</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Handle form submission
+        $('#addMoneyForm').submit(function (event) {
+            event.preventDefault();
+
+            // Perform AJAX request
+            $.ajax({
+                type: 'POST',
+                url: '/add-money',
+                data: $(this).serialize(),
+                success: function (updatedUser) {
+                    // Update the balance on the page
+                    $('#balance').text(updatedUser.balance);
+
+                    // Close the modal
+                    $('#addMoneyModal').modal('hide');
+                },
+                error: function () {
+                    alert('Error adding money. Please try again.');
+                }
+            });
+        });
+
+
+    });
+</script>
+
+
+</script>
+</head>
+<body>
+	<!-- create navigation bar ( header) -->
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+					aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#" th:href="@{/}">Registration and
+					Login Module</a>
+			</div>
+			<div id="navbar" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<br>
+	<br>
+
+	<div class="container">
+		<h1>Registration and Login with Spring Boot, Spring Security,
+			Thymeleaf, Hibernate and MySQL</h1>
+		
+	
+		<p>User's first name: <span th:text="${#authentication.principal.firstName}"></span></p>
+
+    <!-- Accessing lastName -->
+    <p>User's last name: <span th:text="${#authentication.principal.lastName}"></span></p>
+
+    <!-- Accessing email -->
+    <p>User's email: <span th:text="${#authentication.principal.email}"></span></p>
+    <p>User's balance: <span th:text="${#authentication.principal.balance}" id="balance"></span></p>
+		<button id="addMoneyButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMoneyModal">
+    Add Money
+</button>
+		<p> <button>Withdraw Money </button> </p>
+	</div>
+	<div class="modal fade" id="addMoneyModal" tabindex="-1" role="dialog" aria-labelledby="addMoneyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addMoneyModalLabel">Add Money</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/add-money}" method="post" id="addMoneyForm">
+                    <div class="form-group">
+                        <label for="amount">Amount:</label>
+                        <input type="number" class="form-control" id="amount" name="amount" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
